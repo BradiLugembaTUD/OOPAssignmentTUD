@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="output" path="bin"/>
+    <classpathentry kind="lib" path="lib/Name.jar"/>
+    <classpathentry kind="lib" path="lib/ant.jar"/>
+    <classpathentry kind="lib" path="lib/ant-launcher.jar"/>
+    <classpathentry kind="lib" path="lib/flatlaf.jar"/>
+    <classpathentry kind="lib" path="lib/jl1.0.1.jar"/>
+    <classpathentry kind="lib" path="lib/jna.jar"/>
+    <classpathentry kind="lib" path="lib/jna-platform.jar"/>
+    <classpathentry kind="lib" path="lib/jsminim.jar"/>
+    <classpathentry kind="lib" path="lib/minim.jar"/>
+    <classpathentry kind="lib" path="lib/mp3spi1.9.5.jar"/>
+    <classpathentry kind="lib" path="lib/pde.jar"/>
+    <classpathentry kind="lib" path="lib/tritonus_aos.jar"/>
+    <classpathentry kind="lib" path="lib/tritonus_share.jar"/>
+    <classpathentry kind="lib" path="lib/core.jar"/>
+    <classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
+    <classpathentry kind="lib" path="lib/jogl-all.jar"/>
+</classpath>
