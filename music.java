@@ -1,5 +1,4 @@
 import ddf.minim.AudioBuffer;
-import ddf.minim.AudioInput;
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 import processing.core.PApplet;
@@ -11,11 +10,7 @@ public class music extends PApplet {
     AudioBuffer buffer;
     float lerpedHue = 0;
     float lerpedAvg = 0;
-<<<<<<< HEAD
     float rotationAngle = 0;
-=======
-    float waveScale = 5; // Scaling factor for wave size
->>>>>>> b75e3c49de7487b15d02cefa62cbb1135e02ba55
 
     @Override
     public void settings() {
@@ -25,7 +20,7 @@ public class music extends PApplet {
     @Override
     public void setup() {
         minim = new Minim(this);
-        player = minim.loadFile("respect.mp3", 1024);
+        player = minim.loadFile("data/respect.mp3", 1024);
         player.play();
         buffer = player.mix;
     }
@@ -44,45 +39,50 @@ public class music extends PApplet {
 
         lerpedAvg = lerp(lerpedAvg, avgAmplitude, 0.1f);
 
-<<<<<<< HEAD
         float rotationSpeed = map(lerpedAvg, 0, 1, 0.01f, 0.1f);
         rotationAngle += rotationSpeed;
-=======
-        // Visualize the average amplitude with a sine wave
-        float h = height / 2;
-        float waveHeight = lerpedAvg * 200; // Adjust multiplier for wave amplitude
-        float waveFrequency = 0.02f; // Adjust frequency for wider or narrower wave
->>>>>>> b75e3c49de7487b15d02cefa62cbb1135e02ba55
 
         float hue = map(lerpedAvg, 0, 1, 0, 360);
         lerpedHue = lerp(lerpedHue, hue, 0.1f);
-        fill(lerpedHue, 255, 255);
-        stroke(lerpedHue, 255, 255);
 
-<<<<<<< HEAD
         float shapeSize = lerpedAvg * 300;
-        translate(width / 2, height / 2);
-        rotate(rotationAngle);
-        beginShape();
-
-        for (int i = 0; i < 6; i++) {
-            float angle = TWO_PI / 6 * i;
-            float x = cos(angle) * shapeSize;
-            float y = sin(angle) * shapeSize;
-            vertex(x, y);
-=======
-        for (float x = 0; x < width; x += 2) {
-            float y = h + sin(x * waveFrequency) * waveHeight * waveScale; // Apply scaling factor
-            float hue = (lerpedHue + x) % 360;
-            stroke(hue, 255, 255);
-            point(x, y);
->>>>>>> b75e3c49de7487b15d02cefa62cbb1135e02ba55
+        float shapeCount = lerpedAvg * 20;
+        for (int i = 0; i < shapeCount; i++) {
+            float angle = map(i, 0, shapeCount, 0, TWO_PI);
+            float x = width / 2 + cos(angle + rotationAngle) * shapeSize;
+            float y = height / 2 + sin(angle + rotationAngle) * shapeSize;
+            float shapeHue = (lerpedHue + i * 10) % 360;
+            fill(shapeHue, 255, 255);
+            stroke(shapeHue, 255, 255);
+            float shapeType = i % 4;
+            switch ((int) shapeType) {
+                case 0:
+                    ellipse(x, y, shapeSize, shapeSize);
+                    break;
+                case 1:
+                    rectMode(CENTER);
+                    rect(x, y, shapeSize, shapeSize);
+                    break;
+                case 2:
+                    triangle(x - shapeSize / 2, y + shapeSize / 2, x + shapeSize / 2, y + shapeSize / 2, x,
+                            y - shapeSize / 2);
+                    break;
+                case 3:
+                    float pentagonRadius = shapeSize / 2 / cos(PI / 5);
+                    beginShape();
+                    for (int j = 0; j < 5; j++) {
+                        float theta = TWO_PI / 5 * j;
+                        float px = x + cos(theta) * pentagonRadius;
+                        float py = y + sin(theta) * pentagonRadius;
+                        vertex(px, py);
+                    }
+                    endShape(CLOSE);
+                    break;
+            }
         }
-        endShape(CLOSE);
-
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         PApplet.main("music");
     }
 }
