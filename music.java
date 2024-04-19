@@ -10,8 +10,8 @@ public class music extends PApplet {
     AudioPlayer player;
     AudioBuffer buffer;
     float lerpedHue = 0;
-
     float lerpedAvg = 0;
+    float waveScale = 5; // Scaling factor for wave size
 
     @Override
     public void settings() {
@@ -45,12 +45,12 @@ public class music extends PApplet {
         // Visualize the average amplitude with a sine wave
         float h = height / 2;
         float waveHeight = lerpedAvg * 200; // Adjust multiplier for wave amplitude
-        float waveFrequency = 0.02f; // Adjust frequency for smoother or faster wave
+        float waveFrequency = 0.02f; // Adjust frequency for wider or narrower wave
 
         lerpedHue += 0.1; // Hue increment for color change
 
         for (float x = 0; x < width; x += 2) {
-            float y = h + sin(x * waveFrequency) * waveHeight;
+            float y = h + sin(x * waveFrequency) * waveHeight * waveScale; // Apply scaling factor
             float hue = (lerpedHue + x) % 360;
             stroke(hue, 255, 255);
             point(x, y);
@@ -58,8 +58,7 @@ public class music extends PApplet {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         PApplet.main("music");
     }
-
 }
