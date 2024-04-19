@@ -10,8 +10,8 @@ public class music extends PApplet {
     AudioPlayer player;
     AudioBuffer buffer;
     float lerpedHue = 0;
-
     float lerpedAvg = 0;
+    float rotationAngle = 0;
 
     @Override
     public void settings() {
@@ -32,29 +32,34 @@ public class music extends PApplet {
         colorMode(HSB);
         strokeWeight(2);
 
-        // Calculate the average amplitude of the audio buffer
         float totalAmplitude = 0;
         for (int i = 0; i < buffer.size(); i++) {
             totalAmplitude += abs(buffer.get(i));
         }
         float avgAmplitude = totalAmplitude / buffer.size();
 
-        // Smoothly interpolate the average amplitude
         lerpedAvg = lerp(lerpedAvg, avgAmplitude, 0.1f);
 
-        // Visualize the average amplitude with a sine wave
-        float h = height / 2;
-        float waveHeight = lerpedAvg * 200; // Adjust multiplier for wave amplitude
-        float waveFrequency = 0.02f; // Adjust frequency for smoother or faster wave
+        float rotationSpeed = map(lerpedAvg, 0, 1, 0.01f, 0.1f);
+        rotationAngle += rotationSpeed;
 
-        lerpedHue += 0.1; // Hue increment for color change
+        float hue = map(lerpedAvg, 0, 1, 0, 360);
+        lerpedHue = lerp(lerpedHue, hue, 0.1f);
+        fill(lerpedHue, 255, 255);
+        stroke(lerpedHue, 255, 255);
 
-        for (float x = 0; x < width; x += 2) {
-            float y = h + sin(x * waveFrequency) * waveHeight;
-            float hue = (lerpedHue + x) % 360;
-            stroke(hue, 255, 255);
-            point(x, y);
+        float shapeSize = lerpedAvg * 300;
+        translate(width / 2, height / 2);
+        rotate(rotationAngle);
+        beginShape();
+
+        for (int i = 0; i < 6; i++) {
+            float angle = TWO_PI / 6 * i;
+            float x = cos(angle) * shapeSize;
+            float y = sin(angle) * shapeSize;
+            vertex(x, y);
         }
+        endShape(CLOSE);
 
     }
 
