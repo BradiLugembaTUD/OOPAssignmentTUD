@@ -130,4 +130,42 @@ public void drawStatic() {
             boolean direction = false;
     
             while (x < width * 1.5 && x > 0 - width / 2) {
+                float surroundingRadius;
+
+                float surrRadMin = sphereRadius + sphereRadius * 1 / 2 * surrCount;
+                float surrRadMax = surrRadMin + surrRadMin * 1 / 8;
     
+                float surrYOffset;
+    
+                float addon = frameCount * 1.5f;
+    
+                if (direction) {
+                    addon = addon * 1.5f;
+                }
+    
+                for (float angle = 0; angle <= 240; angle += 1.5) {
+    
+                    surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax); // Faster
+                                                                                                             // rotation
+                                                                                                             // through
+                                                                                                             // angles,
+                                                                                                             // radius
+                                                                                                             // oscillates
+    
+                    surrYOffset = sin(radians(150)) * surroundingRadius;
+    
+                    x = round(cos(radians(angle + 150)) * surroundingRadius + center.x);
+                    y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
+    
+                    noStroke();
+                    fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
+                    circle(x, y, 3 * unit / 10.24f);
+                    noFill();
+                }
+    
+                direction = !direction;
+    
+                surrCount += 1;
+            }
+    
+        
