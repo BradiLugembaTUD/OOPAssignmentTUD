@@ -31,4 +31,9 @@ public class RespectVisualizer extends PApplet {
     float unit;
     int groundLineY;
     PVector center;
+
+    public void settings() {
+        size(canvasWidth, canvasHeight);
+        smooth(8);
+    }
 }
