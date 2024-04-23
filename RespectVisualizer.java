@@ -25,4 +25,10 @@ public class RespectVisualizer extends PApplet {
     int bands = 256; // must be multiple of two
     float[] spectrum = new float[bands];
     float[] sum = new float[bands];
+
+
+    // Graphics
+    float unit;
+    int groundLineY;
+    PVector center;
 }
