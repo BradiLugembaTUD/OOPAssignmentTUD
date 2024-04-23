@@ -2,7 +2,8 @@ import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
-public class RespectVisualizer extends PApplet {
+public class RespectVisualizer extends PApplet 
+{
 
     // Configuration variables
     // ------------------------
@@ -55,63 +56,64 @@ public class RespectVisualizer extends PApplet {
 
         fft.linAverages(bands);
     }
-}
 
 
-int sphereRadius;
 
-float spherePrevX;
-float spherePrevY;
+    int sphereRadius;
 
-int yOffset;
+    float spherePrevX;
+    float spherePrevY;
 
-boolean initialStatic = true;
-float[] extendingSphereLinesRadius;
+    int yOffset;
 
-public void drawStatic() {
+    boolean initialStatic = true;
+    float[] extendingSphereLinesRadius;
 
-    if (initialStatic) {
-        extendingSphereLinesRadius = new float[241];
+    public void drawStatic() {
 
-        for (int angle = 0; angle <= 240; angle += 4) {
-            extendingSphereLinesRadius[angle] = map(random(1), 0, 1, sphereRadius, sphereRadius * 7);
+        if (initialStatic) {
+            extendingSphereLinesRadius = new float[241];
+
+            for (int angle = 0; angle <= 240; angle += 4) {
+                extendingSphereLinesRadius[angle] = map(random(1), 0, 1, sphereRadius, sphereRadius * 7);
+            }
+
+            initialStatic = false;
         }
 
-        initialStatic = false;
-    }
+        // More extending lines
+        for (int angle = 0; angle <= 240; angle += 4) {
 
-            // More extending lines
-            for (int angle = 0; angle <= 240; angle += 4) {
+            float x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
+            float y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
 
-                float x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
-                float y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
-    
-                float xDestination = x;
-                float yDestination = y;
-    
-                // Draw lines in small increments to make it easier to work with
-                for (int i = sphereRadius; i <= extendingSphereLinesRadius[angle]; i++) {
-                    float x2 = cos(radians(angle + 150)) * i + center.x;
-                    float y2 = sin(radians(angle + 150)) * i + groundLineY - yOffset;
-    
-                    if (y2 <= getGroundY(x2)) { // Make sure it doesn't go into ground
-                        xDestination = x2;
-                        yDestination = y2;
-                    }
-                }
+            float xDestination = x;
+            float yDestination = y;
 
-                
-                stroke(255);
+            // Draw lines in small increments to make it easier to work with
+            for (int i = sphereRadius; i <= extendingSphereLinesRadius[angle]; i++) {
+                float x2 = cos(radians(angle + 150)) * i + center.x;
+                float y2 = sin(radians(angle + 150)) * i + groundLineY - yOffset;
 
-                if (y <= getGroundY(x)) {
-                    line(x, y, xDestination, yDestination);
+                if (y2 <= getGroundY(x2)) { // Make sure it doesn't go into ground
+                    xDestination = x2;
+                    yDestination = y2;
                 }
             }
-        } 
-    
+
+            
+            stroke(255);
+
+            if (y <= getGroundY(x)) {
+                line(x, y, xDestination, yDestination);
+            }
+        }
+    } 
         
-    
-        public void drawAll(float[] sum) {
+            
+        
+        public void drawAll(float[] sum) 
+        {
             // Center sphere
             sphereRadius = 15 * round(unit);
     
@@ -146,11 +148,11 @@ public void drawStatic() {
                 for (float angle = 0; angle <= 240; angle += 1.5) {
     
                     surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax); // Faster
-                                                                                                             // rotation
-                                                                                                             // through
-                                                                                                             // angles,
-                                                                                                             // radius
-                                                                                                             // oscillates
+                                                                                                            // rotation
+                                                                                                            // through
+                                                                                                            // angles,
+                                                                                                            // radius
+                                                                                                            // oscillates
     
                     surrYOffset = sin(radians(150)) * surroundingRadius;
     
@@ -167,5 +169,9 @@ public void drawStatic() {
     
                 surrCount += 1;
             }
+        }
+}
+
+
     
         
