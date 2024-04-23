@@ -7,7 +7,7 @@ public class main {
         System.out.println("Hello, world!");
 
         String[] a = { "MAIN" };
-        processing.core.PApplet.runSketch(a, new music());
+        processing.core.PApplet.runSketch(a, new RespectVisualizer());
     }
 
 }
