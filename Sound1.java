@@ -1,4 +1,5 @@
 public class Assignment {
+
 import ddf.minim.AudioBuffer;
 import ddf.minim.AudioInput;
 import ddf.minim.AudioPlayer;
@@ -10,7 +11,7 @@ public class Sound1 extends PApplet {
     Minim m;
     AudioInput ai;
     AudioPlayer ap;
-    
+
     AudioBuffer b;
 
     @Override
@@ -23,12 +24,11 @@ public class Sound1 extends PApplet {
     public void setup() {
         // Setup code goes here
         m = new Minim(this);
-        //ai = m.getLineIn(Minim.MONO, width, 44100, 16);
+        // ai = m.getLineIn(Minim.MONO, width, 44100, 16);
         ap = m.loadFile("tomp3.cc - 08 PsychNerD and Marco G  More Cowbell.mp3");
         ap.play();
         b = ap.mix;
     }
-
 
     float y = 400;
 
@@ -40,31 +40,29 @@ public class Sound1 extends PApplet {
         background(0);
         stroke(255);
 
-        //float f = lerp(10, 20, 0.2);
+        // float f = lerp(10, 20, 0.2);
 
-        //float a = lerp(a, b, 0.1f);
+        // float a = lerp(a, b, 0.1f);
 
         float h = height / 2;
-        for(int i = 0 ; i < b.size() ; i ++)
-        {
-            float hue = map(i, 0, b.size() , 0, 256);
+        for (int i = 0; i < b.size(); i++) {
+            float hue = map(i, 0, b.size(), 0, 256);
             stroke(hue, 255, 255);
             noFill();
-            //line(i, h , i , h + b.get(i) * h);
-            //rect(i, h , i , h + b.get(i) * h);
-            //circle(i, h, b.get(i) * h);
+            // line(i, h , i , h + b.get(i) * h);
+            // rect(i, h , i , h + b.get(i) * h);
+            // circle(i, h, b.get(i) * h);
         }
 
         float tot = 0;
-        for(int i = 0 ; i < b.size() ; i ++)
-        {
+        for (int i = 0; i < b.size(); i++) {
             tot += abs(b.get(i));
         }
 
         float avg = tot / b.size();
 
         lerpedAvg = lerp(lerpedAvg, avg, 0.1f);
-        
+
         stroke(250, 255, 255);
         circle(h, h, avg * h * 5);
 
@@ -79,13 +77,13 @@ public class Sound1 extends PApplet {
         stroke(100, 255, 255);
         circle(h + 200, lerped, 50);
 
-
-
-
         // Drawing code goes here
     }
 
     float lerped = 0;
 }
+    public static void main(String[] args) {
+        PApplet.main("ie.tudublin.Sound1");
+    }
 
 }
