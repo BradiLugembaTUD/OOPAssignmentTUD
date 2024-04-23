@@ -160,78 +160,78 @@ public class RespectVisualizer extends PApplet {
 
             surrCount += 1;
         }
-    }
+    
+        // Lines extending from sphere
+        float extendingLinesMin = sphereRadius * 1.3f;
+        float extendingLinesMax = sphereRadius * 3.5f;
 
-    // Lines extending from sphere
-    float extendingLinesMin = sphereRadius * 1.3f;
-    float extendingLinesMax = sphereRadius * 3.5f;
+        float xDestination;
+        float yDestination;
 
-    float xDestination;
-    float yDestination;
+        
 
-    for(
-    int angle = 0;angle<=240;angle++)
-    {
+        for (int angle = 0; angle<=240 ;angle++)
+        {
 
-        float extendingSphereLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
+            float extendingSphereLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
 
-        // Radius are mapped differently for highs, mids, and lows - alter higher
-        // mapping number for different result (eg. 0.8 to 0.2 in the highs)
-        if (sum[0] != 0) {
-            if (angle >= 0 && angle <= 30) {
-                extendingSphereLinesRadius = map(sum[240 - round(map((angle), 0, 30, 0, 80))], 0, 0.8f,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
-            } else if (angle > 30 && angle <= 90) {
-                extendingSphereLinesRadius = map(sum[160 - round(map((angle - 30), 0, 60, 0, 80))], 0, 3,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
-            } else if (angle > 90 && angle <= 120) {
-                extendingSphereLinesRadius = map(sum[80 - round(map((angle - 90), 0, 30, 65, 80))], 0, 40,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
-            } else if (angle > 120 && angle <= 150) {
-                extendingSphereLinesRadius = map(sum[0 + round(map((angle - 120), 0, 30, 0, 15))], 0, 40,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
-            } else if (angle > 150 && angle <= 210) {
-                extendingSphereLinesRadius = map(sum[80 + round(map((angle - 150), 0, 60, 0, 80))], 0, 3,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
-            } else if (angle > 210) {
-                extendingSphereLinesRadius = map(sum[160 + round(map((angle - 210), 0, 30, 0, 80))], 0, 0.8f,
-                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+            // Radius are mapped differently for highs, mids, and lows - alter higher
+            // mapping number for different result (eg. 0.8 to 0.2 in the highs)
+            if (sum[0] != 0) {
+                if (angle >= 0 && angle <= 30) {
+                    extendingSphereLinesRadius = map(sum[240 - round(map((angle), 0, 30, 0, 80))], 0, 0.8f,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+                } else if (angle > 30 && angle <= 90) {
+                    extendingSphereLinesRadius = map(sum[160 - round(map((angle - 30), 0, 60, 0, 80))], 0, 3,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+                } else if (angle > 90 && angle <= 120) {
+                    extendingSphereLinesRadius = map(sum[80 - round(map((angle - 90), 0, 30, 65, 80))], 0, 40,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+                } else if (angle > 120 && angle <= 150) {
+                    extendingSphereLinesRadius = map(sum[0 + round(map((angle - 120), 0, 30, 0, 15))], 0, 40,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+                } else if (angle > 150 && angle <= 210) {
+                    extendingSphereLinesRadius = map(sum[80 + round(map((angle - 150), 0, 60, 0, 80))], 0, 3,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+                } else if (angle > 210) {
+                    extendingSphereLinesRadius = map(sum[160 + round(map((angle - 210), 0, 30, 0, 80))], 0, 0.8f,
+                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+                }
+            }
+
+            x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
+            y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
+
+            xDestination = x;
+            yDestination = y;
+
+            for (int i = sphereRadius; i <= extendingSphereLinesRadius; i++) {
+                int x2 = round(cos(radians(angle + 150)) * i + center.x);
+                int y2 = round(sin(radians(angle + 150)) * i + groundLineY - yOffset);
+
+                if (y2 <= getGroundY(x2)) { // Make sure it doesnt go into ground
+                    xDestination = x2;
+                    yDestination = y2;
+                }
+            }
+            stroke(map(extendingSphereLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+
+            if (y <= getGroundY(x)) {
+                line(x, y, xDestination, yDestination);
             }
         }
 
-        x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
-        y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
+        // Ground line
+        for(int groundX = 0;groundX<=width;groundX++)
+        {
 
-        xDestination = x;
-        yDestination = y;
+            float groundY = getGroundY(groundX);
 
-        for (int i = sphereRadius; i <= extendingSphereLinesRadius; i++) {
-            int x2 = round(cos(radians(angle + 150)) * i + center.x);
-            int y2 = round(sin(radians(angle + 150)) * i + groundLineY - yOffset);
-
-            if (y2 <= getGroundY(x2)) { // Make sure it doesnt go into ground
-                xDestination = x2;
-                yDestination = y2;
-            }
+            noStroke();
+            fill(255);
+            circle(groundX, groundY, 1.8f * unit / 10.24f);
+            noFill();
         }
-        stroke(map(extendingSphereLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
-
-        if (y <= getGroundY(x)) {
-            line(x, y, xDestination, yDestination);
-        }
-    }
-
-    // Ground line
-    for(
-    int groundX = 0;groundX<=width;groundX++)
-    {
-
-        float groundY = getGroundY(groundX);
-
-        noStroke();
-        fill(255);
-        circle(groundX, groundY, 1.8f * unit / 10.24f);
-        noFill();
     }
 
     // Get the Y position at position X of ground sine wave
@@ -265,7 +265,9 @@ public class RespectVisualizer extends PApplet {
         drawAll(sum);
     }
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) 
+    {
         PApplet.main("RespectVisualizer");
     }
 }
