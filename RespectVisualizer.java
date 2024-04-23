@@ -99,4 +99,35 @@ public void drawStatic() {
                         yDestination = y2;
                     }
                 }
+
+                
+                stroke(255);
+
+                if (y <= getGroundY(x)) {
+                    line(x, y, xDestination, yDestination);
+                }
+            }
+        } 
+    
+        
+    
+        public void drawAll(float[] sum) {
+            // Center sphere
+            sphereRadius = 15 * round(unit);
+    
+            spherePrevX = 0;
+            spherePrevY = 0;
+    
+            yOffset = round(sin(radians(150)) * sphereRadius);
+    
+            drawStatic();
+    
+            // Lines surrounding
+            float x = 0;
+            float y = 0;
+            int surrCount = 1;
+    
+            boolean direction = false;
+    
+            while (x < width * 1.5 && x > 0 - width / 2) {
     
