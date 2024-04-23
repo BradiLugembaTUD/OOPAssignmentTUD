@@ -56,7 +56,7 @@ public class music extends PApplet {
         float textSizeFactor = map(lerpedAvg, 0, 1, 0.5f, 2);
         textSize(textSizeBase * textSizeFactor);
         fill(lerpedHue, 255, 255);
-        text("RESPECT", width / 2, height / 4);
+        text("RESPECT", width / 4, height / 7);
 
         // sine waves that represent sea waves
         for (float y = 0; y < height; y += 10) {
@@ -75,3 +75,6 @@ public class music extends PApplet {
         PApplet.main("music");
     }
 }
+
+
+
