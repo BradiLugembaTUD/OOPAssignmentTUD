@@ -14,4 +14,15 @@ public class RespectVisualizer extends PApplet {
     float fps = 30;
     float smoothingFactor = 0.25f; // FFT audio analysis smoothing factor
     // ------------------------
+
+
+    // Global variables
+    AudioPlayer track;
+    FFT fft;
+    Minim minim;
+
+    // General
+    int bands = 256; // must be multiple of two
+    float[] spectrum = new float[bands];
+    float[] sum = new float[bands];
 }
