@@ -36,4 +36,23 @@ public class RespectVisualizer extends PApplet {
         size(canvasWidth, canvasHeight);
         smooth(8);
     }
+
+    public void setup() {
+        frameRate(fps);
+
+        // Graphics related variable setting
+        unit = height / 100; // Everything else can be based around unit to make it change depending on size
+        strokeWeight(unit / 10.24f);
+        groundLineY = height * 3 / 4;
+        center = new PVector(width / 2, height * 3 / 4);
+
+        minim = new Minim(this);
+        track = minim.loadFile(audioFileName, 2048);
+
+        track.loop();
+
+        fft = new FFT(track.bufferSize(), track.sampleRate());
+
+        fft.linAverages(bands);
+    }
 }
