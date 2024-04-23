@@ -56,3 +56,47 @@ public class RespectVisualizer extends PApplet {
         fft.linAverages(bands);
     }
 }
+
+
+int sphereRadius;
+
+float spherePrevX;
+float spherePrevY;
+
+int yOffset;
+
+boolean initialStatic = true;
+float[] extendingSphereLinesRadius;
+
+public void drawStatic() {
+
+    if (initialStatic) {
+        extendingSphereLinesRadius = new float[241];
+
+        for (int angle = 0; angle <= 240; angle += 4) {
+            extendingSphereLinesRadius[angle] = map(random(1), 0, 1, sphereRadius, sphereRadius * 7);
+        }
+
+        initialStatic = false;
+    }
+
+            // More extending lines
+            for (int angle = 0; angle <= 240; angle += 4) {
+
+                float x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
+                float y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
+    
+                float xDestination = x;
+                float yDestination = y;
+    
+                // Draw lines in small increments to make it easier to work with
+                for (int i = sphereRadius; i <= extendingSphereLinesRadius[angle]; i++) {
+                    float x2 = cos(radians(angle + 150)) * i + center.x;
+                    float y2 = sin(radians(angle + 150)) * i + groundLineY - yOffset;
+    
+                    if (y2 <= getGroundY(x2)) { // Make sure it doesn't go into ground
+                        xDestination = x2;
+                        yDestination = y2;
+                    }
+                }
+    
