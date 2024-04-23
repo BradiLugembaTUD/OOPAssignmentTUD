@@ -11,7 +11,8 @@ public class MusicVisualizer extends PApplet {
     AudioBuffer buffer;
     float lerpedHue = 0;
     float lerpedAvg = 0;
-    PVector fishPos, fishVelocity, fishAcceleration;
+    PVector[] fishPositions;
+    PVector[] fishVelocities;
 
     @Override
     public void settings() {
@@ -26,16 +27,22 @@ public class MusicVisualizer extends PApplet {
         buffer = player.mix;
         textSize(16);
         textAlign(CENTER, CENTER);
-        fishPos = new PVector(width / 2, height / 2);
-        fishVelocity = new PVector(random(-1, 1), random(-1, 1));
-        fishAcceleration = new PVector(0, 0);
+
+        fishPositions = new PVector[20]; // Adjust the number of fish
+        fishVelocities = new PVector[20];
+
+        for (int i = 0; i < fishPositions.length; i++) {
+            fishPositions[i] = new PVector(random(width), random(height));
+            fishVelocities[i] = PVector.random2D().mult(random(1, 3));
+        }
+
         noCursor();
     }
 
     @Override
     public void draw() {
-        background(0, 100, 200); // Darker blue for depth
-        colorMode(HSB);
+        background(50, 100, 200); // Muted blue background
+
         float totalAmplitude = 0;
         for (int i = 0; i < buffer.size(); i++) {
             totalAmplitude += abs(buffer.get(i));
@@ -44,37 +51,45 @@ public class MusicVisualizer extends PApplet {
         lerpedAvg = lerp(lerpedAvg, avgAmplitude, 0.1f);
         lerpedHue = lerp(lerpedHue, map(avgAmplitude, 0, 1, 0, 255), 0.1f);
 
-        updateFish();
-        drawDetailedFish();
-        drawSpeakers();
+        for (int i = 0; i < fishPositions.length; i++) {
+            updateFish(i);
+            drawFish(fishPositions[i], fishVelocities[i]);
+        }
+
+        drawDecorations();
     }
 
-    void updateFish() {
-        fishAcceleration = PVector.random2D();
-        fishAcceleration.mult(lerpedAvg * 5);
-        fishVelocity.add(fishAcceleration);
-        fishVelocity.limit(3);
-        fishPos.add(fishVelocity);
-        fishPos.x = (fishPos.x + width) % width;
-        fishPos.y = (fishPos.y + height) % height;
+    void updateFish(int index) {
+        fishVelocities[index].add(PVector.random2D().mult(lerpedAvg * 0.1f));
+        fishVelocities[index].limit(3);
+        fishPositions[index].add(fishVelocities[index]);
+
+        if (fishPositions[index].x > width) {
+            fishPositions[index].x = 0;
+        } else if (fishPositions[index].x < 0) {
+            fishPositions[index].x = width;
+        }
+        if (fishPositions[index].y > height) {
+            fishPositions[index].y = 0;
+        } else if (fishPositions[index].y < 0) {
+            fishPositions[index].y = height;
+        }
     }
 
-    void drawDetailedFish() {
+    void drawFish(PVector pos, PVector vel) {
         pushMatrix();
-        translate(fishPos.x, fishPos.y);
-        rotate(fishVelocity.heading() + PI / 2);
-        noStroke();
-        fill(lerpedHue, 255, 255, 127); // Corrected alpha value
-        // Drawing a more detailed fish
+        translate(pos.x, pos.y);
+        rotate(vel.heading() + PI / 2);
+        fill(lerpedHue + 30, 255, 255, 127); // Warmer tone for fish color
         beginShape();
-        vertex(-15, -10);
-        bezierVertex(-30, -20, -30, 20, -15, 10);
-        bezierVertex(-5, 5, -5, -5, -15, -10);
+        vertex(0, -20);
+        bezierVertex(-10, -30, -10, -10, 0, -5);
+        bezierVertex(10, -10, 10, -30, 0, -20);
         endShape(CLOSE);
         popMatrix();
     }
 
-    void drawSpeakers() {
+    void drawDecorations() {
         for (int i = 0; i < width; i += 60) {
             float x = i;
             fill(lerpedHue, 100, 150);
