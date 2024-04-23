@@ -2,8 +2,7 @@ import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
-public class RespectVisualizer extends PApplet 
-{
+public class RespectVisualizer extends PApplet {
 
     // Configuration variables
     // ------------------------
@@ -16,7 +15,6 @@ public class RespectVisualizer extends PApplet
     float smoothingFactor = 0.25f; // FFT audio analysis smoothing factor
     // ------------------------
 
-
     // Global variables
     AudioPlayer track;
     FFT fft;
@@ -26,7 +24,6 @@ public class RespectVisualizer extends PApplet
     int bands = 256; // must be multiple of two
     float[] spectrum = new float[bands];
     float[] sum = new float[bands];
-
 
     // Graphics
     float unit;
@@ -56,8 +53,6 @@ public class RespectVisualizer extends PApplet
 
         fft.linAverages(bands);
     }
-
-
 
     int sphereRadius;
 
@@ -101,77 +96,176 @@ public class RespectVisualizer extends PApplet
                 }
             }
 
-            
             stroke(255);
 
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
             }
         }
-    } 
-        
-            
-        
-        public void drawAll(float[] sum) 
-        {
-            // Center sphere
-            sphereRadius = 15 * round(unit);
-    
-            spherePrevX = 0;
-            spherePrevY = 0;
-    
-            yOffset = round(sin(radians(150)) * sphereRadius);
-    
-            drawStatic();
-    
-            // Lines surrounding
-            float x = 0;
-            float y = 0;
-            int surrCount = 1;
-    
-            boolean direction = false;
-    
-            while (x < width * 1.5 && x > 0 - width / 2) {
-                float surroundingRadius;
+    }
 
-                float surrRadMin = sphereRadius + sphereRadius * 1 / 2 * surrCount;
-                float surrRadMax = surrRadMin + surrRadMin * 1 / 8;
-    
-                float surrYOffset;
-    
-                float addon = frameCount * 1.5f;
-    
-                if (direction) {
-                    addon = addon * 1.5f;
-                }
-    
-                for (float angle = 0; angle <= 240; angle += 1.5) {
-    
-                    surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax); // Faster
-                                                                                                            // rotation
-                                                                                                            // through
-                                                                                                            // angles,
-                                                                                                            // radius
-                                                                                                            // oscillates
-    
-                    surrYOffset = sin(radians(150)) * surroundingRadius;
-    
-                    x = round(cos(radians(angle + 150)) * surroundingRadius + center.x);
-                    y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
-    
-                    noStroke();
-                    fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
-                    circle(x, y, 3 * unit / 10.24f);
-                    noFill();
-                }
-    
-                direction = !direction;
-    
-                surrCount += 1;
+    public void drawAll(float[] sum) {
+        // Center sphere
+        sphereRadius = 15 * round(unit);
+
+        spherePrevX = 0;
+        spherePrevY = 0;
+
+        yOffset = round(sin(radians(150)) * sphereRadius);
+
+        drawStatic();
+
+        // Lines surrounding
+        float x = 0;
+        float y = 0;
+        int surrCount = 1;
+
+        boolean direction = false;
+
+        while (x < width * 1.5 && x > 0 - width / 2) {
+            float surroundingRadius;
+
+            float surrRadMin = sphereRadius + sphereRadius * 1 / 2 * surrCount;
+            float surrRadMax = surrRadMin + surrRadMin * 1 / 8;
+
+            float surrYOffset;
+
+            float addon = frameCount * 1.5f;
+
+            if (direction) {
+                addon = addon * 1.5f;
+            }
+
+            for (float angle = 0; angle <= 240; angle += 1.5) {
+
+                surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax); // Faster
+                                                                                                         // rotation
+                                                                                                         // through
+                                                                                                         // angles,
+                                                                                                         // radius
+                                                                                                         // oscillates
+
+                surrYOffset = sin(radians(150)) * surroundingRadius;
+
+                x = round(cos(radians(angle + 150)) * surroundingRadius + center.x);
+                y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
+
+                noStroke();
+                fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
+                circle(x, y, 3 * unit / 10.24f);
+                noFill();
+            }
+
+            direction = !direction;
+
+            surrCount += 1;
+        }
+    }
+
+    // Lines extending from sphere
+    float extendingLinesMin = sphereRadius * 1.3f;
+    float extendingLinesMax = sphereRadius * 3.5f;
+
+    float xDestination;
+    float yDestination;
+
+    for(
+    int angle = 0;angle<=240;angle++)
+    {
+
+        float extendingSphereLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
+
+        // Radius are mapped differently for highs, mids, and lows - alter higher
+        // mapping number for different result (eg. 0.8 to 0.2 in the highs)
+        if (sum[0] != 0) {
+            if (angle >= 0 && angle <= 30) {
+                extendingSphereLinesRadius = map(sum[240 - round(map((angle), 0, 30, 0, 80))], 0, 0.8f,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+            } else if (angle > 30 && angle <= 90) {
+                extendingSphereLinesRadius = map(sum[160 - round(map((angle - 30), 0, 60, 0, 80))], 0, 3,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+            } else if (angle > 90 && angle <= 120) {
+                extendingSphereLinesRadius = map(sum[80 - round(map((angle - 90), 0, 30, 65, 80))], 0, 40,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+            } else if (angle > 120 && angle <= 150) {
+                extendingSphereLinesRadius = map(sum[0 + round(map((angle - 120), 0, 30, 0, 15))], 0, 40,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+            } else if (angle > 150 && angle <= 210) {
+                extendingSphereLinesRadius = map(sum[80 + round(map((angle - 150), 0, 60, 0, 80))], 0, 3,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+            } else if (angle > 210) {
+                extendingSphereLinesRadius = map(sum[160 + round(map((angle - 210), 0, 30, 0, 80))], 0, 0.8f,
+                        extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
             }
         }
+
+        x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
+        y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
+
+        xDestination = x;
+        yDestination = y;
+
+        for (int i = sphereRadius; i <= extendingSphereLinesRadius; i++) {
+            int x2 = round(cos(radians(angle + 150)) * i + center.x);
+            int y2 = round(sin(radians(angle + 150)) * i + groundLineY - yOffset);
+
+            if (y2 <= getGroundY(x2)) { // Make sure it doesnt go into ground
+                xDestination = x2;
+                yDestination = y2;
+            }
+        }
+        stroke(map(extendingSphereLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+
+        if (y <= getGroundY(x)) {
+            line(x, y, xDestination, yDestination);
+        }
+    }
+
+    // Ground line
+    for(
+    int groundX = 0;groundX<=width;groundX++)
+    {
+
+        float groundY = getGroundY(groundX);
+
+        noStroke();
+        fill(255);
+        circle(groundX, groundY, 1.8f * unit / 10.24f);
+        noFill();
+    }
+
+    // Get the Y position at position X of ground sine wave
+    public float getGroundY(float groundX) {
+
+        float angle = 1.1f * groundX / unit * 10.24f;
+
+        float groundY = sin(radians(angle + frameCount * 2)) * unit * 1.25f + groundLineY - unit * 1.25f;
+
+        return groundY;
+    }
+
+    public void draw() {
+        fft.forward(track.mix);
+
+        spectrum = new float[bands];
+
+        for (int i = 0; i < fft.avgSize(); i++) {
+            spectrum[i] = fft.getAvg(i) / 2;
+
+            // Smooth the FFT spectrum data by smoothing factor
+            sum[i] += (abs(spectrum[i]) - sum[i]) * smoothingFactor;
+        }
+
+        // Reset canvas
+        fill(0);
+        noStroke();
+        rect(0, 0, width, height);
+        noFill();
+
+        drawAll(sum);
+    }
+
+    public static void main(String[] args) {
+        PApplet.main("RespectVisualizer");
+    }
 }
-
-
-    
-        
