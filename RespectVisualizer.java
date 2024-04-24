@@ -35,6 +35,9 @@ public class RespectVisualizer extends PApplet {
     // Particle system
     ParticleSystem particleSystem;
     boolean dynamicVisualization = true;
+    boolean showParticles = true;
+    boolean staticMode = false; // Flag for static visualization mode
+    int colorModeToggle = 0; // Switch between multiple color modes
 
     public void settings() {
         size(canvasWidth, canvasHeight);
