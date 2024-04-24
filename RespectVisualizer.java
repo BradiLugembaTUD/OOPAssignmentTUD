@@ -275,7 +275,11 @@ public class RespectVisualizer extends PApplet {
         rect(0, 0, width, height);
         noFill();
 
-        drawAll(sum);
+        if (!staticMode) {
+            drawAll(sum);
+        } else {
+            drawStatic();
+        }
     }
 
     public static void main(String[] args) {
