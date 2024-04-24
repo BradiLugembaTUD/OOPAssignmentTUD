@@ -295,6 +295,22 @@ public class RespectVisualizer extends PApplet {
                 particleSystem.changeDirection(1); // Change particle system direction
             }
         } else if (key == ' ') {
+            dynamicVisualization = !dynamicVisualization; // Toggle dynamic visualization
+            showParticles = !showParticles; // Toggle particle visibility
+            if (!dynamicVisualization) {
+                noLoop(); // Stop animation
+            } else {
+                loop(); // Resume animation
+            }
+        } else if (key == 'S' || key == 's') {
+            staticMode = true; // Switch to static visualization mode
+        } else if (key == 'D' || key == 'd') {
+            staticMode = false; // Switch to dynamic visualization mode
+        } else if (key == 'C' || key == 'c') {
+            // Toggle color modes
+            colorModeToggle = (colorModeToggle + 1) % 3;
+        }
+    }
 
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
