@@ -240,6 +240,11 @@ public class RespectVisualizer extends PApplet {
             circle(groundX, groundY, 1.8f * unit / 10.24f);
             noFill();
         }
+        // Display particle system
+        if (showParticles) {
+            particleSystem.update();
+            particleSystem.display();
+        }
     }
 
     // Get the Y position at position X of ground sine wave
