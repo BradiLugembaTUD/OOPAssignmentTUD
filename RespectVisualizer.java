@@ -1,6 +1,9 @@
 import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 public class RespectVisualizer extends PApplet {
 
