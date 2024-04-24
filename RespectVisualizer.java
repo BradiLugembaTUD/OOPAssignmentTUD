@@ -1,6 +1,8 @@
 import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class RespectVisualizer extends PApplet {
 
@@ -30,6 +32,13 @@ public class RespectVisualizer extends PApplet {
     int groundLineY;
     PVector center;
 
+    // Particle system
+    ParticleSystem particleSystem;
+    boolean dynamicVisualization = true;
+    boolean showParticles = true;
+    boolean staticMode = false; // Flag for static visualization mode
+    int colorModeToggle = 0; // Toggle for different color modes
+
     public void settings() {
         size(canvasWidth, canvasHeight);
         smooth(8);
@@ -52,36 +61,31 @@ public class RespectVisualizer extends PApplet {
         fft = new FFT(track.bufferSize(), track.sampleRate());
 
         fft.linAverages(bands);
+
+        // Initialize particle system
+        particleSystem = new ParticleSystem();
     }
 
     int sphereRadius;
-
     float spherePrevX;
     float spherePrevY;
-
     int yOffset;
-
     boolean initialStatic = true;
     float[] extendingSphereLinesRadius;
 
     public void drawStatic() {
-
         if (initialStatic) {
             extendingSphereLinesRadius = new float[241];
-
             for (int angle = 0; angle <= 240; angle += 4) {
                 extendingSphereLinesRadius[angle] = map(random(1), 0, 1, sphereRadius, sphereRadius * 7);
             }
-
             initialStatic = false;
         }
 
         // More extending lines
         for (int angle = 0; angle <= 240; angle += 4) {
-
             float x = round(cos(radians(angle + 150)) * sphereRadius + center.x);
             float y = round(sin(radians(angle + 150)) * sphereRadius + groundLineY - yOffset);
-
             float xDestination = x;
             float yDestination = y;
 
@@ -96,7 +100,6 @@ public class RespectVisualizer extends PApplet {
                 }
             }
             stroke(255);
-
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
             }
@@ -104,12 +107,13 @@ public class RespectVisualizer extends PApplet {
     }
 
     public void drawAll(float[] sum) {
+        // Initialize extendingSphereLinesRadius
+        float[] extendingSphereLinesRadius = new float[241];
+
         // Center sphere
         sphereRadius = 15 * round(unit);
-
         spherePrevX = 0;
         spherePrevY = 0;
-
         yOffset = round(sin(radians(150)) * sphereRadius);
 
         drawStatic();
@@ -118,18 +122,13 @@ public class RespectVisualizer extends PApplet {
         float x = 0;
         float y = 0;
         int surrCount = 1;
-
         boolean direction = false;
 
         while (x < width * 1.5 && x > 0 - width / 2) {
-
             float surroundingRadius;
-
             float surrRadMin = sphereRadius + sphereRadius * 1 / 2 * surrCount;
             float surrRadMax = surrRadMin + surrRadMin * 1 / 8;
-
             float surrYOffset;
-
             float addon = frameCount * 1.5f;
 
             if (direction) {
@@ -137,14 +136,7 @@ public class RespectVisualizer extends PApplet {
             }
 
             for (float angle = 0; angle <= 240; angle += 1.5) {
-
-                surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax); // Faster
-                                                                                                         // rotation
-                                                                                                         // through
-                                                                                                         // angles,
-                                                                                                         // radius
-                                                                                                         // oscillates
-
+                surroundingRadius = map(sin(radians(angle * 7 + addon)), -1, 1, surrRadMin, surrRadMax);
                 surrYOffset = sin(radians(150)) * surroundingRadius;
 
                 x = round(cos(radians(angle + 150)) * surroundingRadius + center.x);
@@ -157,7 +149,6 @@ public class RespectVisualizer extends PApplet {
             }
 
             direction = !direction;
-
             surrCount += 1;
         }
 
@@ -169,30 +160,27 @@ public class RespectVisualizer extends PApplet {
         float yDestination;
 
         for (int angle = 0; angle <= 240; angle++) {
+            float extendingSpheresLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
 
-            float extendingSphereLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
-
-            // Radius are mapped differently for highs, mids, and lows - alter higher
-            // mapping number for different result (eg. 0.8 to 0.2 in the highs)
             if (sum[0] != 0) {
                 if (angle >= 0 && angle <= 30) {
-                    extendingSphereLinesRadius = map(sum[240 - round(map((angle), 0, 30, 0, 80))], 0, 0.8f,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+                    extendingSpheresLinesRadius = map(sum[240 - round(map((angle), 0, 30, 0, 80))], 0, 0.8f,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 } else if (angle > 30 && angle <= 90) {
-                    extendingSphereLinesRadius = map(sum[160 - round(map((angle - 30), 0, 60, 0, 80))], 0, 3,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+                    extendingSpheresLinesRadius = map(sum[160 - round(map((angle - 30), 0, 60, 0, 80))], 0, 3,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 } else if (angle > 90 && angle <= 120) {
-                    extendingSphereLinesRadius = map(sum[80 - round(map((angle - 90), 0, 30, 65, 80))], 0, 40,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+                    extendingSpheresLinesRadius = map(sum[80 - round(map((angle - 90), 0, 30, 65, 80))], 0, 40,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 } else if (angle > 120 && angle <= 150) {
-                    extendingSphereLinesRadius = map(sum[0 + round(map((angle - 120), 0, 30, 0, 15))], 0, 40,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Bass
+                    extendingSpheresLinesRadius = map(sum[0 + round(map((angle - 120), 0, 30, 0, 15))], 0, 40,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 } else if (angle > 150 && angle <= 210) {
-                    extendingSphereLinesRadius = map(sum[80 + round(map((angle - 150), 0, 60, 0, 80))], 0, 3,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Mids
+                    extendingSpheresLinesRadius = map(sum[80 + round(map((angle - 150), 0, 60, 0, 80))], 0, 3,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 } else if (angle > 210) {
-                    extendingSphereLinesRadius = map(sum[160 + round(map((angle - 210), 0, 30, 0, 80))], 0, 0.8f,
-                            extendingSphereLinesRadius - extendingSphereLinesRadius / 8, extendingLinesMax * 1.5f); // Highs
+                    extendingSpheresLinesRadius = map(sum[160 + round(map((angle - 210), 0, 30, 0, 80))], 0, 0.8f,
+                            extendingSpheresLinesRadius - extendingSpheresLinesRadius / 8, extendingLinesMax * 1.5f);
                 }
             }
 
@@ -202,16 +190,16 @@ public class RespectVisualizer extends PApplet {
             xDestination = x;
             yDestination = y;
 
-            for (int i = sphereRadius; i <= extendingSphereLinesRadius; i++) {
+            for (int i = sphereRadius; i <= extendingSpheresLinesRadius; i++) {
                 int x2 = round(cos(radians(angle + 150)) * i + center.x);
                 int y2 = round(sin(radians(angle + 150)) * i + groundLineY - yOffset);
 
-                if (y2 <= getGroundY(x2)) { // Make sure it doesnt go into ground
+                if (y2 <= getGroundY(x2)) { // Make sure it doesn't go into ground
                     xDestination = x2;
                     yDestination = y2;
                 }
             }
-            stroke(map(extendingSphereLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+            stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
 
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
@@ -220,34 +208,33 @@ public class RespectVisualizer extends PApplet {
 
         // Ground line
         for (int groundX = 0; groundX <= width; groundX++) {
-
             float groundY = getGroundY(groundX);
-
             noStroke();
             fill(255);
             circle(groundX, groundY, 1.8f * unit / 10.24f);
             noFill();
         }
+
+        // Display particle system
+        if (showParticles) {
+            particleSystem.update();
+            particleSystem.display();
+        }
     }
 
     // Get the Y position at position X of ground sine wave
     public float getGroundY(float groundX) {
-
         float angle = 1.1f * groundX / unit * 10.24f;
-
         float groundY = sin(radians(angle + frameCount * 2)) * unit * 1.25f + groundLineY - unit * 1.25f;
-
         return groundY;
     }
 
     public void draw() {
         fft.forward(track.mix);
-
         spectrum = new float[bands];
 
         for (int i = 0; i < fft.avgSize(); i++) {
             spectrum[i] = fft.getAvg(i) / 2;
-
             // Smooth the FFT spectrum data by smoothing factor
             sum[i] += (abs(spectrum[i]) - sum[i]) * smoothingFactor;
         }
@@ -258,10 +245,114 @@ public class RespectVisualizer extends PApplet {
         rect(0, 0, width, height);
         noFill();
 
-        drawAll(sum);
+        if (!staticMode) {
+            drawAll(sum);
+        } else {
+            drawStatic();
+        }
+    }
+
+    public void keyPressed() {
+        if (key == CODED) {
+            if (keyCode == UP) {
+                fps += 5; // Increase frame rate
+                frameRate(fps);
+            } else if (keyCode == DOWN) {
+                fps -= 5; // Decrease frame rate
+                frameRate(fps);
+            } else if (keyCode == LEFT) {
+                particleSystem.changeDirection(-1); // Change particle system direction
+            } else if (keyCode == RIGHT) {
+                particleSystem.changeDirection(1); // Change particle system direction
+            }
+        } else if (key == ' ') {
+            dynamicVisualization = !dynamicVisualization; // Toggle dynamic visualization
+            showParticles = !showParticles; // Toggle particle visibility
+            if (!dynamicVisualization) {
+                noLoop(); // Stop animation
+            } else {
+                loop(); // Resume animation
+            }
+        } else if (key == 'S' || key == 's') {
+            staticMode = true; // Switch to static visualization mode
+        } else if (key == 'D' || key == 'd') {
+            staticMode = false; // Switch to dynamic visualization mode
+        } else if (key == 'C' || key == 'c') {
+            // Toggle color modes
+            colorModeToggle = (colorModeToggle + 1) % 3;
+        }
     }
 
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
+    }
+
+    class Particle {
+        PVector position;
+        PVector velocity;
+        PVector acceleration;
+        float lifespan;
+        int particleColor;
+
+        Particle(float x, float y, float vx, float vy) {
+            position = new PVector(x, y);
+            velocity = new PVector(vx, vy);
+            acceleration = new PVector(0, 0.05f);
+            lifespan = 255;
+            particleColor = color(random(255), random(255), random(255));
+        }
+
+        void update() {
+            velocity.add(acceleration);
+            position.add(velocity);
+            lifespan -= 2;
+        }
+
+        void display() {
+            stroke(particleColor, lifespan);
+            fill(particleColor, lifespan);
+            ellipse(position.x, position.y, 8, 8);
+        }
+
+        boolean isDead() {
+            return lifespan < 0;
+        }
+    }
+
+    class ParticleSystem {
+        ArrayList<Particle> particles;
+        int direction;
+
+        ParticleSystem() {
+            particles = new ArrayList<>();
+            direction = 1; // Default direction: right
+        }
+
+        void addParticle(float x, float y) {
+            float vx = random(-1, 1) * direction;
+            float vy = random(-2, -1);
+            particles.add(new Particle(x, y, vx, vy));
+        }
+
+        void update() {
+            Iterator<Particle> iterator = particles.iterator();
+            while (iterator.hasNext()) {
+                Particle p = iterator.next();
+                p.update();
+                if (p.isDead()) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        void display() {
+            for (Particle p : particles) {
+                p.display();
+            }
+        }
+
+        void changeDirection(int dir) {
+            direction = dir;
+        }
     }
 }
