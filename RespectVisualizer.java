@@ -1,8 +1,6 @@
 import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class RespectVisualizer extends PApplet {
 
@@ -32,13 +30,6 @@ public class RespectVisualizer extends PApplet {
     int groundLineY;
     PVector center;
 
-    // Particle system
-    ParticleSystem particleSystem;
-    boolean dynamicVisualization = true;
-    boolean showParticles = true;
-    boolean staticMode = false; // Flag for static visualization mode
-    int colorModeToggle = 0; // Switch between multiple color modes
-
     public void settings() {
         size(canvasWidth, canvasHeight);
         smooth(8);
@@ -61,9 +52,6 @@ public class RespectVisualizer extends PApplet {
         fft = new FFT(track.bufferSize(), track.sampleRate());
 
         fft.linAverages(bands);
-
-        // Initialize particle system
-        particleSystem = new ParticleSystem();
     }
 
     int sphereRadius;
@@ -107,7 +95,6 @@ public class RespectVisualizer extends PApplet {
                     yDestination = y2;
                 }
             }
-
             stroke(255);
 
             if (y <= getGroundY(x)) {
@@ -135,6 +122,7 @@ public class RespectVisualizer extends PApplet {
         boolean direction = false;
 
         while (x < width * 1.5 && x > 0 - width / 2) {
+
             float surroundingRadius;
 
             float surrRadMin = sphereRadius + sphereRadius * 1 / 2 * surrCount;
@@ -240,11 +228,6 @@ public class RespectVisualizer extends PApplet {
             circle(groundX, groundY, 1.8f * unit / 10.24f);
             noFill();
         }
-        // Display particle system
-        if (showParticles) {
-            particleSystem.update();
-            particleSystem.display();
-        }
     }
 
     // Get the Y position at position X of ground sine wave
@@ -275,78 +258,10 @@ public class RespectVisualizer extends PApplet {
         rect(0, 0, width, height);
         noFill();
 
-        if (!staticMode) {
-            drawAll(sum);
-        } else {
-            drawStatic();
-        }
-    }
-
-    public void keyPressed() {
-        if (key == CODED) {
-            if (keyCode == UP) {
-                fps += 5; // Increase frame rate
-                frameRate(fps);
-            } else if (keyCode == DOWN) {
-                fps -= 5; // Decrease frame rate
-                frameRate(fps);
-            } else if (keyCode == LEFT) {
-                particleSystem.changeDirection(-1); // Change particle system direction
-            } else if (keyCode == RIGHT) {
-                particleSystem.changeDirection(1); // Change particle system direction
-            }
-        } else if (key == ' ') {
-            dynamicVisualization = !dynamicVisualization; // Toggle dynamic visualization
-            showParticles = !showParticles; // Toggle particle visibility
-            if (!dynamicVisualization) {
-                noLoop(); // Stop animation
-            } else {
-                loop(); // Resume animation
-            }
-        } else if (key == 'S' || key == 's') {
-            staticMode = true; // Switch to static visualization mode
-        } else if (key == 'D' || key == 'd') {
-            staticMode = false; // Switch to dynamic visualization mode
-        } else if (key == 'C' || key == 'c') {
-            // Toggle color modes
-            colorModeToggle = (colorModeToggle + 1) % 3;
-        }
+        drawAll(sum);
     }
 
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
     }
-
-    class Particle {
-        PVector position;
-        PVector velocity;
-        PVector acceleration;
-        float lifespan;
-        int particleColor;
-
-        Particle(float x, float y, float vx, float vy) {
-            position = new PVector(x, y);
-            velocity = new PVector(vx, vy);
-            acceleration = new PVector(0, 0.05f);
-            lifespan = 255;
-            particleColor = color(random(255), random(255), random(255));
-        }
-
-        void update() {
-            velocity.add(acceleration);
-            position.add(velocity);
-            lifespan -= 2;
-        }
-
-        void display() {
-            stroke(particleColor, lifespan);
-            fill(particleColor, lifespan);
-            ellipse(position.x, position.y, 8, 8);
-        }
-
-        boolean isDead() {
-            return lifespan < 0;
-        }
-    }
-
 }
