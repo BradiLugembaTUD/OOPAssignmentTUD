@@ -4,7 +4,6 @@ import ddf.minim.analysis.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 public class RespectVisualizer extends PApplet {
 
     // Configuration variables
@@ -32,6 +31,10 @@ public class RespectVisualizer extends PApplet {
     float unit;
     int groundLineY;
     PVector center;
+
+    // Particle system
+    ParticleSystem particleSystem;
+    boolean dynamicVisualization = true;
 
     public void settings() {
         size(canvasWidth, canvasHeight);
@@ -163,7 +166,7 @@ public class RespectVisualizer extends PApplet {
 
             surrCount += 1;
         }
-    
+
         // Lines extending from sphere
         float extendingLinesMin = sphereRadius * 1.3f;
         float extendingLinesMax = sphereRadius * 3.5f;
@@ -171,10 +174,7 @@ public class RespectVisualizer extends PApplet {
         float xDestination;
         float yDestination;
 
-        
-
-        for (int angle = 0; angle<=240 ;angle++)
-        {
+        for (int angle = 0; angle <= 240; angle++) {
 
             float extendingSphereLinesRadius = map(noise(angle * 0.3f), 0, 1, extendingLinesMin, extendingLinesMax);
 
@@ -225,8 +225,7 @@ public class RespectVisualizer extends PApplet {
         }
 
         // Ground line
-        for(int groundX = 0;groundX<=width;groundX++)
-        {
+        for (int groundX = 0; groundX <= width; groundX++) {
 
             float groundY = getGroundY(groundX);
 
@@ -268,9 +267,7 @@ public class RespectVisualizer extends PApplet {
         drawAll(sum);
     }
 
-
-    public static void main(String[] args) 
-    {
+    public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
     }
 }
