@@ -1,9 +1,6 @@
 import processing.core.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 
 public class RespectVisualizer extends PApplet {
 
@@ -125,6 +122,8 @@ public class RespectVisualizer extends PApplet {
 
         boolean direction = false;
 
+        
+
         while (x < width * 1.5 && x > 0 - width / 2) {
             float surroundingRadius;
 
@@ -162,6 +161,7 @@ public class RespectVisualizer extends PApplet {
             direction = !direction;
 
             surrCount += 1;
+            
         }
     
         // Lines extending from sphere
