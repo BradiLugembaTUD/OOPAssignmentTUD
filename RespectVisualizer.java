@@ -315,4 +315,20 @@ public class RespectVisualizer extends PApplet {
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
     }
+
+    class Particle {
+        PVector position;
+        PVector velocity;
+        PVector acceleration;
+        float lifespan;
+        int particleColor;
+
+        Particle(float x, float y, float vx, float vy) {
+            position = new PVector(x, y);
+            velocity = new PVector(vx, vy);
+            acceleration = new PVector(0, 0.05f);
+            lifespan = 255;
+            particleColor = color(random(255), random(255), random(255));
+        }
+}
 }
