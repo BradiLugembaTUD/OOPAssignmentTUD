@@ -61,6 +61,9 @@ public class RespectVisualizer extends PApplet {
         fft = new FFT(track.bufferSize(), track.sampleRate());
 
         fft.linAverages(bands);
+
+        // Initialize particle system
+        particleSystem = new ParticleSystem();
     }
 
     int sphereRadius;
