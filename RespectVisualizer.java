@@ -281,6 +281,7 @@ public class RespectVisualizer extends PApplet {
             drawStatic();
         }
     }
+
     public void keyPressed() {
         if (key == CODED) {
             if (keyCode == UP) {
@@ -330,5 +331,22 @@ public class RespectVisualizer extends PApplet {
             lifespan = 255;
             particleColor = color(random(255), random(255), random(255));
         }
-}
+
+        void update() {
+            velocity.add(acceleration);
+            position.add(velocity);
+            lifespan -= 2;
+        }
+
+        void display() {
+            stroke(particleColor, lifespan);
+            fill(particleColor, lifespan);
+            ellipse(position.x, position.y, 8, 8);
+        }
+
+        boolean isDead() {
+            return lifespan < 0;
+        }
+    }
+
 }
