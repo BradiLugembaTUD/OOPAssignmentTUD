@@ -281,6 +281,20 @@ public class RespectVisualizer extends PApplet {
             drawStatic();
         }
     }
+    public void keyPressed() {
+        if (key == CODED) {
+            if (keyCode == UP) {
+                fps += 5; // Increase frame rate
+                frameRate(fps);
+            } else if (keyCode == DOWN) {
+                fps -= 5; // Decrease frame rate
+                frameRate(fps);
+            } else if (keyCode == LEFT) {
+                particleSystem.changeDirection(-1); // Change particle system direction
+            } else if (keyCode == RIGHT) {
+                particleSystem.changeDirection(1); // Change particle system direction
+            }
+        } else if (key == ' ') {
 
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
