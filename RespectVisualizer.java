@@ -143,7 +143,8 @@ public class RespectVisualizer extends PApplet {
                 y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
 
                 noStroke();
-                fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
+                // Randomize fill color
+                fill(random(200), random(45), random(255));
                 circle(x, y, 3 * unit / 10.24f);
                 noFill();
             }
@@ -252,36 +253,7 @@ public class RespectVisualizer extends PApplet {
         }
     }
 
-    public void keyPressed() {
-        if (key == CODED) {
-            if (keyCode == UP) {
-                fps += 5; // Increase frame rate
-                frameRate(fps);
-            } else if (keyCode == DOWN) {
-                fps -= 5; // Decrease frame rate
-                frameRate(fps);
-            } else if (keyCode == LEFT) {
-                particleSystem.changeDirection(-1); // Change particle system direction
-            } else if (keyCode == RIGHT) {
-                particleSystem.changeDirection(1); // Change particle system direction
-            }
-        } else if (key == ' ') {
-            dynamicVisualization = !dynamicVisualization; // Toggle dynamic visualization
-            showParticles = !showParticles; // Toggle particle visibility
-            if (!dynamicVisualization) {
-                noLoop(); // Stop animation
-            } else {
-                loop(); // Resume animation
-            }
-        } else if (key == 'S' || key == 's') {
-            staticMode = true; // Switch to static visualization mode
-        } else if (key == 'D' || key == 'd') {
-            staticMode = false; // Switch to dynamic visualization mode
-        } else if (key == 'C' || key == 'c') {
-            // Toggle color modes
-            colorModeToggle = (colorModeToggle + 1) % 3;
-        }
-    }
+
 
     public static void main(String[] args) {
         PApplet.main("RespectVisualizer");
