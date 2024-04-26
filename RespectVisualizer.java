@@ -235,7 +235,7 @@ public class RespectVisualizer extends PApplet {
     }
 
     int lastColorChangeTime = 0; // Variable to store the last time color was changed
-int colorChangeInterval = 3000; // Color change interval in milliseconds (3 seconds)
+int colorChangeInterval = 2100; // Color change interval in milliseconds (3 seconds)
 
 public void draw() {
     fft.forward(track.mix);
