@@ -9,7 +9,7 @@ public class RespectVisualizer extends PApplet {
     // Configuration variables
     // ------------------------
     int canvasWidth = 1080;
-    int canvasHeight = 1080;
+    int canvasHeight = 800;
 
     String audioFileName = "data/respect.mp3"; // Audio file in data folder
 
@@ -99,7 +99,7 @@ public class RespectVisualizer extends PApplet {
                     yDestination = y2;
                 }
             }
-            stroke(255);
+            stroke(255,255,0);
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
             }
@@ -142,8 +142,9 @@ public class RespectVisualizer extends PApplet {
                 x = round(cos(radians(angle + 150)) * surroundingRadius + center.x);
                 y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
 
-                noStroke();
-                fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
+                stroke(100,50,80);
+                //fill(map(surroundingRadius, surrRadMin, surrRadMax, 100, 255));
+                fill(255,0,0);
                 circle(x, y, 3 * unit / 10.24f);
                 noFill();
             }
@@ -199,7 +200,9 @@ public class RespectVisualizer extends PApplet {
                     yDestination = y2;
                 }
             }
-            stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+            //stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+
+            stroke(0,255,255);
 
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
@@ -210,7 +213,8 @@ public class RespectVisualizer extends PApplet {
         for (int groundX = 0; groundX <= width; groundX++) {
             float groundY = getGroundY(groundX);
             noStroke();
-            fill(255);
+            //fill(255);
+            fill(255,220,0);
             circle(groundX, groundY, 1.8f * unit / 10.24f);
             noFill();
         }
