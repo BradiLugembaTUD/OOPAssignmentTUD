@@ -99,7 +99,7 @@ public class RespectVisualizer extends PApplet {
                     yDestination = y2;
                 }
             }
-            stroke(255);
+            stroke(255, 255, 0);
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
             }
@@ -143,9 +143,9 @@ public class RespectVisualizer extends PApplet {
                 y = round(sin(radians(angle + 150)) * surroundingRadius + getGroundY(x) - surrYOffset);
 
                 noStroke();
-                // Randomize fill color
+               
                 fill(random(200), random(45), random(255));
-                circle(x, y, 3 * unit / 10.24f);
+                circle(x, y, 3 * unit / 10.4f);
                 noFill();
             }
 
@@ -200,7 +200,8 @@ public class RespectVisualizer extends PApplet {
                     yDestination = y2;
                 }
             }
-            stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+           // stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
+           stroke(255,255, 255);
 
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
@@ -241,7 +242,9 @@ public class RespectVisualizer extends PApplet {
         }
 
         // Reset canvas
-        fill(0);
+        fill(0, 0, 139); 
+
+
         noStroke();
         rect(0, 0, width, height);
         noFill();
