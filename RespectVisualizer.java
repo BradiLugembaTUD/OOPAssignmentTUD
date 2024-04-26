@@ -9,7 +9,7 @@ public class RespectVisualizer extends PApplet {
     // Configuration variables
     // ------------------------
     int canvasWidth = 1080;
-    int canvasHeight = 1080;
+    int canvasHeight = 850;
 
     String audioFileName = "data/respect.mp3"; // Audio file in data folder
 
@@ -201,7 +201,7 @@ public class RespectVisualizer extends PApplet {
                 }
             }
            // stroke(map(extendingSpheresLinesRadius, extendingLinesMin, extendingLinesMax, 200, 255));
-           stroke(255,255, 255);
+           stroke(0,255, 255);
 
             if (y <= getGroundY(x)) {
                 line(x, y, xDestination, yDestination);
@@ -231,31 +231,31 @@ public class RespectVisualizer extends PApplet {
         return groundY;
     }
 
+    int lastColorChangeTime = 0; // Variable to store the last time color was changed
+    int colorChangeInterval = 3000; // Color change interval in milliseconds (3 seconds)
+    
     public void draw() {
         fft.forward(track.mix);
         spectrum = new float[bands];
-
+    
         for (int i = 0; i < fft.avgSize(); i++) {
             spectrum[i] = fft.getAvg(i) / 2;
             // Smooth the FFT spectrum data by smoothing factor
             sum[i] += (abs(spectrum[i]) - sum[i]) * smoothingFactor;
         }
-
-        // Reset canvas
-        fill(0, 0, 139); 
-
-
-        noStroke();
-        rect(0, 0, width, height);
-        noFill();
-
+    
+        // Check if it's time to change the canvas color
+        if (millis() - lastColorChangeTime >= colorChangeInterval) {
+            background(random(255), random(255), random(255)); // Change canvas color to random RGB
+            lastColorChangeTime = millis(); // Update the last color change time
+        }
+    
         if (!staticMode) {
             drawAll(sum);
         } else {
             drawStatic();
         }
     }
-
 
 
     public static void main(String[] args) {
